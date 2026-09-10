@@ -1,0 +1,12 @@
+{
+  "name": "salexandr0s-profile",
+  "private": true,
+  "type": "module",
+  "description": "Self-hosted, auto-refreshing SVG cards for the salexandr0s GitHub profile",
+  "scripts": {
+    "build": "node scripts/build.js",
+    "preview": "node scripts/preview.js",
+    "page": "node scripts/page.js"
+  },
+  "engines": { "node": ">=20" }
+}

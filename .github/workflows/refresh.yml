@@ -1,0 +1,48 @@
+name: refresh cards
+
+on:
+  schedule:
+    - cron: '17 4 * * *'      # daily, 04:17 UTC
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/**'
+      - '.github/workflows/refresh.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-cards
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # PROFILE_TOKEN is a fine-grained or classic PAT with `repo` + `read:user`.
+      # It is what lets the stats card count private contributions. Only
+      # aggregate totals are read — never repository names or code.
+      - name: Generate cards
+        env:
+          GH_TOKEN: ${{ secrets.PROFILE_TOKEN }}
+          GH_LOGIN: ${{ github.repository_owner }}
+        run: node scripts/build.js
+
+      - name: Commit if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -z "$(git status --porcelain assets)" ]; then
+            echo "no change"; exit 0
+          fi
+          git add assets
+          git commit -m "chore: refresh profile cards [skip ci]"
+          git push
