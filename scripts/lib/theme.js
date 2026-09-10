@@ -50,8 +50,12 @@ export const THEMES = [DARK, LIGHT];
 // 1920 and 2560 viewport widths alike. Two HALF cards sit side by side only if
 // 2 x HALF <= 846, so HALF is 418 and FULL is exactly 2 x HALF, which also makes
 // the full-bleed cards align flush with the two-up pair above and below them.
+// The two half cards sit in one paragraph, separated by a single collapsed
+// whitespace that GitHub renders at 3.79px (14px body font). So the pair spans
+// 2 x HALF + 3.79, and HALF is chosen to make that equal FULL — which lands the
+// full-bleed cards flush with the two-up pair on both edges.
 export const FULL = 836;   // full-bleed cards (header, heatmap)
-export const HALF = 418;   // two-up cards, side by side in one paragraph
+export const HALF = 416;   // 416 + 3.79 + 416 = 835.8, flush with FULL
 
 export const U = 4;        // base spacing unit
 

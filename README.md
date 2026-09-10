@@ -8,11 +8,11 @@
 <picture>
   <source media="(prefers-color-scheme: dark)"  srcset="./assets/stats-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="./assets/stats-light.svg">
-  <img alt="Contribution stats, including private work" src="./assets/stats-dark.svg" width="418">
+  <img alt="Contribution stats, including private work" src="./assets/stats-dark.svg" width="416">
 </picture><picture>
   <source media="(prefers-color-scheme: dark)"  srcset="./assets/languages-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="./assets/languages-light.svg">
-  <img alt="Language breakdown by bytes across public and private repositories" src="./assets/languages-dark.svg" width="418">
+  <img alt="Language breakdown by bytes across public and private repositories" src="./assets/languages-dark.svg" width="416">
 </picture>
 </p>
 
