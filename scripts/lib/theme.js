@@ -33,7 +33,7 @@ export const LIGHT = {
   fg: '#1f2733',
   fgDim: '#5b6675',
   fgMuted: '#798494',   // 3.6:1 on panel — matches the dark theme's separation
-  amber: '#a86a11',
+  amber: '#9d6210',    // 4.76:1 on panel — clears AA for the 12px tree glyph
   cyan: '#0e7c8c',
   green: '#3f7c22',
   magenta: '#7c4bb5',
@@ -45,9 +45,13 @@ export const LIGHT = {
 
 export const THEMES = [DARK, LIGHT];
 
-// Layout grid. GitHub's README content column is ~890px at desktop width.
-export const FULL = 880;   // full-bleed cards (header, heatmap)
-export const HALF = 434;   // two-up cards inside a markdown table
+// Layout grid. Measured on a live profile page, not guessed: GitHub's profile
+// README column is a hard 846px and does NOT grow — it reads 846 at 1280, 1512,
+// 1920 and 2560 viewport widths alike. Two HALF cards sit side by side only if
+// 2 x HALF <= 846, so HALF is 418 and FULL is exactly 2 x HALF, which also makes
+// the full-bleed cards align flush with the two-up pair above and below them.
+export const FULL = 836;   // full-bleed cards (header, heatmap)
+export const HALF = 418;   // two-up cards, side by side in one paragraph
 
 export const U = 4;        // base spacing unit
 

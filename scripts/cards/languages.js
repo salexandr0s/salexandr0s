@@ -114,10 +114,11 @@ export default function card(data, t) {
   // Legend and bar draw the same buckets, so neither can drift from the other.
   //
   // Linguist has no colour for every language. Resolve against the linguist
-  // table directly rather than trusting `l.color`: the data layer already
-  // substitutes a fixed grey for unmapped languages, and that grey is the LIGHT
-  // theme's muted token, so `l.color || t.fgMuted` never fires and an unmapped
-  // language (Astro, today) would carry a light-theme swatch onto the dark card.
+  // table directly rather than trusting `l.color`: langColor() already
+  // substitutes a fixed grey (#8a94a3) for unmapped languages, so the intended
+  // `l.color || t.fgMuted` fallback never fires — and that grey belongs to
+  // neither theme, so an unmapped language (Astro, today) would paint an
+  // off-palette swatch onto both cards.
   const buckets = top.map((l) => ({ ...l, color: LANG_COLOR[l.name] || t.fgMuted }));
   if (rest.length) {
     buckets.push({
@@ -179,12 +180,25 @@ export default function card(data, t) {
 .lgSeg{transform-box:fill-box;transform-origin:left center;}
 ${keyframes}
 @media (prefers-reduced-motion:reduce){
-.lgSeg,.lgSeam,.lgDot{animation:none;transform:none;opacity:1;}
+.lgSeg,.lgSeam,.lgDot{animation:none;animation-name:none!important;transform:none;opacity:1;}
 }`;
+  // ^ the per-element animation-name lives in a style="" attribute, which
+  // outranks any stylesheet rule, so the shorthand alone cannot take the name
+  // back. It only works today because the shorthand also resets the duration to
+  // 0s; the !important longhand makes the reset mean what it says.
 
   const lead = all[0];
   const headPct = lead ? pct(lead.pct) : '—';
   const headW = chw(headPct, T.h2);
+
+  // The lead language name is the only run on the card whose length arrives
+  // straight from the API, and linguist names run long ("Jupyter Notebook",
+  // "Common Workflow Language"). Give it exactly the room between the headline
+  // and the language count, and not one column more.
+  const headCount = plural(all.length, 'language', 'languages');
+  const headX = n(PAD + headW + GUTTER);
+  const headCols = Math.max(4, Math.floor(
+    (RIGHT - chw(headCount, T.tiny) - GUTTER - headX) / ch(T.small)));
 
   // The pct rail is sized to the widest value actually rendered, and the name
   // column takes exactly what is left — in whole characters, so nothing can
@@ -200,8 +214,8 @@ ${keyframes}
 
     // Headline: the dominant share, then what holds it.
     text({ x: PAD, y: Y.head, s: headPct, size: T.h2, weight: 700, fill: t.amber }),
-    text({ x: n(PAD + headW + GUTTER), y: Y.head, s: lead ? lead.name : 'no data', size: T.small, fill: t.fgDim }),
-    text({ x: RIGHT, y: Y.head, s: plural(all.length, 'language', 'languages'), size: T.tiny, fill: t.fgDim, anchor: 'end' }),
+    text({ x: headX, y: Y.head, s: lead ? clamp(lead.name, headCols) : 'no data', size: T.small, fill: t.fgDim }),
+    text({ x: RIGHT, y: Y.head, s: headCount, size: T.tiny, fill: t.fgDim, anchor: 'end' }),
 
     `<rect x="${PAD}" y="${BAR_Y}" width="${BODY}" height="${BAR_H}" rx="${BAR_R}" fill="${t.grid}"/>`,
     `<g clip-path="url(#lgBar)">${segRects}${seams}</g>`,
@@ -220,19 +234,21 @@ ${keyframes}
     rule({ x: PAD, y: Y.rule, w: BODY, t }),
     statRow({ t, y: Y.tracked, label: 'source tracked', value: bytes(totalBytes) }),
 
-    // The basis, spelled out. Kept short enough to stay inside the body rails.
+    // The basis, spelled out — and clamped to the body rails so a larger repo
+    // count can never push it past the panel edge.
     text({
       x: PAD, y: Y.caption, size: T.micro, fill: t.fgDim,
-      s: [
+      s: clamp([
         'by bytes',
         repoCount === null ? null : `${repoCount} repos`,
-        'public + private, forks excluded',
-      ].filter(Boolean).join('  ·  '),
+        'public + private, no forks or archives',
+      ].filter(Boolean).join('  ·  '), Math.floor(BODY / ch(T.micro))),
     }),
   ].join('');
 
   const title = lead
-    ? `Languages by bytes across ${repoCount ?? 'all'} repositories, public and private: ` +
+    ? `Languages by bytes across ${repoCount ?? 'all'} repositories, public and private, ` +
+      'forks and archives excluded: ' +
       buckets.map((b) => `${b.name} ${pct(b.pct)}`).join(', ') + `. ${bytes(totalBytes)} of source in total.`
     : 'Language breakdown unavailable.';
 

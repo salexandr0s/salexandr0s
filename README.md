@@ -1,25 +1,25 @@
 <picture>
   <source media="(prefers-color-scheme: dark)"  srcset="./assets/header-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="./assets/header-light.svg">
-  <img alt="salexandr0s — solo building with agents since 2025, based in Switzerland" src="./assets/header-dark.svg" width="880">
+  <img alt="salexandr0s — solo building with agents since 2025, based in Switzerland" src="./assets/header-dark.svg" width="836">
 </picture>
 
 <p>
 <picture>
   <source media="(prefers-color-scheme: dark)"  srcset="./assets/stats-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="./assets/stats-light.svg">
-  <img alt="Contribution stats, including private work" src="./assets/stats-dark.svg" width="434">
+  <img alt="Contribution stats, including private work" src="./assets/stats-dark.svg" width="418">
 </picture><picture>
   <source media="(prefers-color-scheme: dark)"  srcset="./assets/languages-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="./assets/languages-light.svg">
-  <img alt="Language breakdown by bytes across public and private repositories" src="./assets/languages-dark.svg" width="434">
+  <img alt="Language breakdown by bytes across public and private repositories" src="./assets/languages-dark.svg" width="418">
 </picture>
 </p>
 
 <picture>
   <source media="(prefers-color-scheme: dark)"  srcset="./assets/heatmap-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="./assets/heatmap-light.svg">
-  <img alt="Contribution activity over the last twelve months" src="./assets/heatmap-dark.svg" width="880">
+  <img alt="Contribution activity over the last twelve months" src="./assets/heatmap-dark.svg" width="836">
 </picture>
 
 ### `❯ cat about.md`

@@ -44,9 +44,21 @@ export const trafficLights = ({ x, y, t, r = 4, gap = 16 }) => {
     `<circle cx="${x + i * gap}" cy="${y}" r="${r}" fill="${c}" opacity="0.75"/>`).join('');
 };
 
-/** Shell prompt glyph used as a section marker. */
-export const prompt = ({ x, y, t, size = 13 }) =>
-  text({ x, y, s: '❯', size, weight: 700, fill: t.amber });
+/**
+ * Shell prompt marker, DRAWN rather than typed.
+ * U+276F is not in JetBrains Mono at all, so setting it as text silently falls
+ * back to whatever the viewer's OS happens to ship — and renders as tofu on a
+ * machine with no Dingbats-capable font. A stroked path is font-independent and
+ * sits exactly on the character grid.
+ */
+export const prompt = ({ x, y, t, size = 13, color }) => {
+  const w = size * 0.354, h = size * 0.646, mid = size * 0.338;
+  const cx = x + (ch(size) - w) / 2, cy = y - mid;
+  const r2 = (v) => Math.round(v * 100) / 100;
+  return `<path d="M${r2(cx)} ${r2(cy - h / 2)}L${r2(cx + w)} ${r2(cy)}L${r2(cx)} ${r2(cy + h / 2)}" ` +
+    `fill="none" stroke="${color || t.amber}" stroke-width="${r2(size * 0.146)}" ` +
+    `stroke-linecap="round" stroke-linejoin="round"/>`;
+};
 
 /**
  * Wrap card body markup in a complete SVG document.

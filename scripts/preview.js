@@ -93,6 +93,34 @@ function checkOverflow(src, w, h) {
   return errs;
 }
 
+/* ---------- every rendered glyph must exist in the embedded subset ---------- */
+// The embedded font is the whole point of the design: metrics are exact only
+// because the viewer is guaranteed to have this exact face. A character NOT in
+// the subset silently falls back to an OS font — different advance width, broken
+// alignment, and tofu on a machine without a matching face. U+276F, the obvious
+// glyph for a shell prompt, is not in JetBrains Mono at all, which is exactly how
+// a bug like that ships unnoticed. Draw such marks as paths instead.
+const COVERED = new Set(JSON.parse(readFileSync(join(root, 'assets', 'fonts', 'coverage.json'), 'utf8')));
+function checkGlyphs(src) {
+  const errs = [];
+  const seen = new Set();
+  const re = /<text\b[^>]*>([\s\S]*?)<\/text>/g;
+  let m;
+  while ((m = re.exec(src))) {
+    const body = m[1].replace(/<[^>]*>/g, '')
+      .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"')
+      .replace(/&apos;/g, "'").replace(/&amp;/g, '&');
+    for (const chr of body) {
+      const cp = chr.codePointAt(0);
+      if (COVERED.has(cp) || seen.has(cp)) continue;
+      seen.add(cp);
+      errs.push(`glyph U+${cp.toString(16).toUpperCase().padStart(4, '0')} "${chr}" is not in the embedded font subset — it will fall back to an OS font or render as tofu`);
+    }
+  }
+  return errs;
+}
+
+
 /* ---------- animations must end in a visible state ---------- */
 function checkAnimations(src) {
   const errs = [];
@@ -130,7 +158,7 @@ async function main() {
 
       const w = parseFloat((svg.match(/\bwidth="([\d.]+)"/) || [, 0])[1]);
       const h = parseFloat((svg.match(/\bheight="([\d.]+)"/) || [, 0])[1]);
-      const errs = [...checkXML(svg), ...checkValues(svg), ...checkOverflow(svg, w, h), ...checkAnimations(svg)];
+      const errs = [...checkXML(svg), ...checkValues(svg), ...checkOverflow(svg, w, h), ...checkAnimations(svg), ...checkGlyphs(svg)];
 
       const out = join(root, 'assets', `${name}-${t.id}.svg`);
       writeFileSync(out, svg);
