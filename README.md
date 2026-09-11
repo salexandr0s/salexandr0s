@@ -24,9 +24,9 @@
 
 ### `❯ cat about.md`
 
-Entrepreneur. I travel a lot, cook more than I should, and mess about with whatever is new.
+Entrepreneur. I travel a lot, cook a lot, eat a lot and mess about with whatever is new.
 
-Blockchain early, agents early. I like building things nobody has to approve first.
+I find new things early and I like building things nobody has to approve first.
 
 So now I ship solo, and the agents do most of the typing.
 
