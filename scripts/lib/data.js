@@ -36,6 +36,18 @@ query($login:String!){
       totalIssueContributions
       totalRepositoryContributions
       restrictedContributionsCount
+      commitContributionsByRepository(maxRepositories:100){
+        repository{ isPrivate } contributions{ totalCount }
+      }
+      pullRequestContributionsByRepository(maxRepositories:100){
+        repository{ isPrivate } contributions{ totalCount }
+      }
+      issueContributionsByRepository(maxRepositories:100){
+        repository{ isPrivate } contributions{ totalCount }
+      }
+      pullRequestReviewContributionsByRepository(maxRepositories:100){
+        repository{ isPrivate } contributions{ totalCount }
+      }
       contributionCalendar{
         totalContributions
         weeks{ contributionDays{ date contributionCount } }
@@ -63,6 +75,41 @@ query($login:String!,$cursor:String){
     }
   }
 }`;
+
+/**
+ * Split the year's contributions into public and private.
+ *
+ * This deliberately does NOT use `totalCommitContributions` vs
+ * `restrictedContributionsCount`, which looks like the obvious split and is a
+ * trap: `restrictedContributionsCount` means "private contributions THIS VIEWER
+ * cannot see", so it moves with the token's scope. A token with no private
+ * visibility reports 561 public / 1,225 restricted; a token with full `repo`
+ * scope reports the same year as 1,639 "commit contributions" and 0 restricted,
+ * because nothing is hidden from it any more — and the private work silently
+ * gets relabelled as public.
+ *
+ * Partitioning the by-repository collections on `repository.isPrivate` is true
+ * under any token. Anything still restricted is private by definition, so it is
+ * added to the private side. Public is then the remainder of the calendar total,
+ * which keeps the two figures summing exactly to the headline.
+ */
+function splitVisibility(c) {
+  const buckets = [
+    c.commitContributionsByRepository,
+    c.pullRequestContributionsByRepository,
+    c.issueContributionsByRepository,
+    c.pullRequestReviewContributionsByRepository,
+  ];
+  let itemisedPrivate = 0;
+  for (const list of buckets) {
+    for (const e of list || []) {
+      if (e.repository?.isPrivate) itemisedPrivate += e.contributions.totalCount;
+    }
+  }
+  const total = c.contributionCalendar.totalContributions;
+  const priv = Math.min(total, itemisedPrivate + (c.restrictedContributionsCount || 0));
+  return { publicContribs: Math.max(0, total - priv), privateContribs: priv };
+}
 
 /** Longest and current run of days with >=1 contribution. */
 function streaks(days) {
@@ -98,6 +145,7 @@ export async function collect() {
 
   const u = p.user;
   const c = u.contributionsCollection;
+  const split = splitVisibility(c);
 
   const days = c.contributionCalendar.weeks
     .flatMap((w) => w.contributionDays)
@@ -128,8 +176,8 @@ export async function collect() {
     followers: u.followers.totalCount,
     totals: {
       contributions: c.contributionCalendar.totalContributions,
-      publicCommits: c.totalCommitContributions,
-      privateContribs: c.restrictedContributionsCount,
+      publicCommits: split.publicContribs,
+      privateContribs: split.privateContribs,
       prs: c.totalPullRequestContributions,
       prsMerged: u.pullRequests.totalCount,
       reviews: c.totalPullRequestReviewContributions,

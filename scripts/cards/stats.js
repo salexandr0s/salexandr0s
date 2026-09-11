@@ -32,7 +32,7 @@ const TREE_STEP = T.small * CELL;   // 15.84
 
 const Y = {
   head: 66,   // headline baseline (26px)
-  pub: 104,   // ├─ public commits
+  pub: 104,   // ├─ public
   priv: 104 + TREE_STEP,  // └─ private, stem-continuous with the line above
   rule: 135,
   r1: 153,    // merged PRs
@@ -193,7 +193,7 @@ export default function card(data, t) {
     seg(privX, privW, t.amber, 'wb'),
 
     // The split, named. Glyph tint keys each line to its bar segment.
-    treeRow({ t, y: Y.pub, glyph: '├─', tint: t.green, label: 'public commits', value: publicCommits }),
+    treeRow({ t, y: Y.pub, glyph: '├─', tint: t.green, label: 'public', value: publicCommits }),
     treeRow({ t, y: Y.priv, glyph: '└─', tint: t.amber, label: 'private', value: privateContribs }),
 
     rule({ x: PAD, y: Y.rule, w: BODY, t }),
@@ -210,7 +210,7 @@ export default function card(data, t) {
   ].join('');
 
   const title =
-    `Stats: ${contributions} contributions in the past year — ${publicCommits} public commits and ` +
+    `Stats: ${contributions} contributions in the past year — ${publicCommits} public and ` +
     `${privateContribs} private contributions. ${prsMerged} merged pull requests, ${reposOwned} repositories` +
     (reposPublic === null ? '' : ` (${fmt(reposPublic)} public)`) +
     `, ${stars} stars earned. Longest streak ${longest} ${days(streak.longest) || 'days'}, ` +
