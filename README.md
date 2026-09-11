@@ -24,37 +24,11 @@
 
 ### `❯ cat about.md`
 
-Entrepreneur and traveller. Technologist by temperament, not by training.
+Entrepreneur. I travel a lot, cook more than I should, and mess about with whatever is new.
 
-Curious about most things and committed to a few: countries I haven't seen, food I haven't
-cooked, and whatever sits one step past the tools that already work. Blockchain caught me
-early and agents caught me early — the same instinct both times, which is wanting to build,
-invest and live without needing anyone's permission. I put weight behind the causes I
-actually believe in.
+Blockchain early, agents early. I like building things nobody has to approve first.
 
-Co-building with AI was the obvious next move toward that independence. So I ship solo now,
-with agents doing most of the typing, and I learn as I go.
-
-### `❯ ls ~/projects`
-
-Most of what I build is private client work. These are the public ones, and they all point
-the same direction — making coding agents into something you can actually run a shop on.
-
-**[ClawControl](https://github.com/salexandr0s/ClawControl)** ★6 · `TypeScript`
-Local-first ops console for AI agent orchestration. Run, watch and steer a fleet of agents
-from one place instead of a wall of terminal tabs.
-
-**[pnevma](https://github.com/salexandr0s/pnevma)** · `Rust` `Swift`
-Terminal-first execution workspace for agent-driven delivery. Native macOS app over a Rust
-workspace, built around the idea that the terminal is the right surface for this, not a chat box.
-
-**[claude-codex-bridge](https://github.com/salexandr0s/claude-codex-bridge)** · `TypeScript`
-An MCP bridge that lets Claude hand planning and review to Codex CLI — two models checking
-each other's work rather than one model marking its own homework.
-
-**[ai-config](https://github.com/salexandr0s/ai-config)** · `Python` `Shell`
-The agents, commands, skills and rules I actually run day to day, plus the design system
-they share. The configuration this whole workflow rests on.
+So now I ship solo, and the agents do most of the typing.
 
 ### `❯ cat stack.txt`
 
